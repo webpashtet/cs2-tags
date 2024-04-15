@@ -15,8 +15,8 @@ public class TagAPI : ITagApi
     {
         return tag switch
         {
-            Tags.ScoreTag => Instance.PlayerDatas[player.Slot].ScoreTag,
-            Tags.ChatTag => Instance.PlayerDatas[player.Slot].ChatTag,
+            Tags.ScoreTag => Instance.PlayersData[player.Slot].ScoreTag,
+            Tags.ChatTag => Instance.PlayersData[player.Slot].ChatTag,
             _ => string.Empty
         };
     }
@@ -25,11 +25,11 @@ public class TagAPI : ITagApi
     {
         if (tag == Tags.ScoreTag)
         {
-            Instance.PlayerDatas[player.Slot].ScoreTag = newtag;
+            Instance.PlayersData[player.Slot].ScoreTag = newtag;
         }
         else
         {
-            Instance.PlayerDatas[player.Slot].ChatTag = newtag;
+            Instance.PlayersData[player.Slot].ChatTag = newtag;
         }
     }
 
@@ -37,11 +37,11 @@ public class TagAPI : ITagApi
     {
         if (tag == Tags.ScoreTag)
         {
-            Instance.PlayerDatas[player.Slot].ScoreTag = GetTag(player).ScoreTag;
+            Instance.PlayersData[player.Slot].ScoreTag = GetTag(player).ScoreTag;
         }
         else
         {
-            Instance.PlayerDatas[player.Slot].ChatTag = GetTag(player).ChatTag;
+            Instance.PlayersData[player.Slot].ChatTag = GetTag(player).ChatTag;
         }
     }
 
@@ -49,8 +49,8 @@ public class TagAPI : ITagApi
     {
         return color switch
         {
-            Colors.NameColor => Instance.PlayerDatas[player.Slot].NameColor,
-            Colors.ChatColor => Instance.PlayerDatas[player.Slot].ChatColor,
+            Colors.NameColor => Instance.PlayersData[player.Slot].NameColor,
+            Colors.ChatColor => Instance.PlayersData[player.Slot].ChatColor,
             _ => string.Empty
         };
     }
@@ -59,11 +59,11 @@ public class TagAPI : ITagApi
     {
         if (color == Colors.ChatColor)
         {
-            Instance.PlayerDatas[player.Slot].ChatColor = newcolor;
+            Instance.PlayersData[player.Slot].ChatColor = newcolor;
         }
         else
         {
-            Instance.PlayerDatas[player.Slot].NameColor = newcolor;
+            Instance.PlayersData[player.Slot].NameColor = newcolor;
         }
     }
 
@@ -73,11 +73,11 @@ public class TagAPI : ITagApi
 
         if (color == Colors.ChatColor)
         {
-            Instance.PlayerDatas[player.Slot].ChatColor = defaultTag.ChatColor;
+            Instance.PlayersData[player.Slot].ChatColor = defaultTag.ChatColor;
         }
         else
         {
-            Instance.PlayerDatas[player.Slot].NameColor = defaultTag.NameColor;
+            Instance.PlayersData[player.Slot].NameColor = defaultTag.NameColor;
         }
     }
 

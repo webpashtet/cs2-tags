@@ -13,6 +13,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\IksAdminApi\IksAdminApi.csproj" />
     <ProjectReference Include="..\TagApi\TagApi.csproj" />
   </ItemGroup>
 

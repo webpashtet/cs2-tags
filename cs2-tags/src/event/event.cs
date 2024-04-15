@@ -28,7 +28,7 @@ public static class Event
         }
 
         Instance.PlayerToggleTags[player.Slot] = true;
-        Instance.PlayerDatas[player.Slot] = GetTag(player);
+        Instance.PlayersData[player.Slot] = GetTag(player);
 
         return HookResult.Continue;
     }
@@ -52,7 +52,7 @@ public static class Event
             return HookResult.Handled;
         }
 
-        CTag playerData = Instance.PlayerDatas[player.Slot]!;
+        CTag playerData = Instance.PlayersData[player.Slot]!;
 
         string deadname = player.PawnIsAlive ? string.Empty : Instance.Config.Settings["deadname"];
         bool teammessage = info.GetArg(0) == "say_team";
@@ -93,7 +93,7 @@ public static class Event
 
         foreach (CCSPlayerController player in Utilities.GetPlayers())
         {
-            string playerclan = Instance.PlayerDatas[player.Slot].ScoreTag;
+            string playerclan = Instance.PlayersData[player.Slot].ScoreTag;
 
             if (playerclan == string.Empty)
             {

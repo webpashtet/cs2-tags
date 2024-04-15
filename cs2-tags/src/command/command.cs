@@ -26,7 +26,7 @@ public partial class Tag
     {
         if (Instance.PlayerToggleTags[player!.Slot])
         {
-            Instance.PlayerDatas[player.Slot] = Instance.Config.Tags.FirstOrDefault(tag => tag.Key == "default").Value ?? new CTag();
+            Instance.PlayersData[player.Slot] = Instance.Config.Tags.FirstOrDefault(tag => tag.Key == "default").Value ?? new CTag();
 
             Instance.PlayerToggleTags[player.Slot] = false;
 
@@ -34,7 +34,7 @@ public partial class Tag
         }
         else
         {
-            Instance.PlayerDatas[player.Slot] = GetTag(player);
+            Instance.PlayersData[player.Slot] = GetTag(player);
 
             Instance.PlayerToggleTags[player.Slot] = true;
 

@@ -4,6 +4,8 @@ using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Admin;
 using System.Collections.Concurrent;
 using TagApi;
+using IksAdminApi;
+using Microsoft.Extensions.Logging;
 using static TagApi.Tag;
 
 namespace Tag;
@@ -11,14 +13,18 @@ namespace Tag;
 public partial class Tag : BasePlugin, IPluginConfig<TagConfig>
 {
     public override string ModuleName => "Tag";
-    public override string ModuleVersion => "0.0.1";
+    public override string ModuleVersion => "0.0.2";
     public override string ModuleAuthor => "schwarper";
+    public override string ModuleDescription => "Fork with IksAdmin capability";
+    
+    private static readonly PluginCapability<IIksAdminApi> AdminCapability = new("iksadmin:core");
 
-    public TagConfig Config { get; set; } = new TagConfig();
-    public ConcurrentDictionary<int, CTag> PlayerDatas { get; set; } = new ConcurrentDictionary<int, CTag>();
-    public bool[] PlayerToggleTags { get; set; } = new bool[64];
-    public static Tag Instance { get; set; } = new Tag();
+    public TagConfig Config { get; set; } = new();
+    public ConcurrentDictionary<int, CTag> PlayersData { get; } = new();
+    public bool[] PlayerToggleTags { get; } = new bool[64];
+    public static Tag Instance { get; private set; } = new();
     public int GlobalTick { get; set; }
+    private static IIksAdminApi? _api;
 
     public override void Load(bool hotReload)
     {
@@ -28,7 +34,7 @@ public partial class Tag : BasePlugin, IPluginConfig<TagConfig>
 
         for (int i = 0; i < 64; i++)
         {
-            PlayerDatas[i] = new();
+            PlayersData[i] = new();
             PlayerToggleTags[i] = new();
         }
 
@@ -42,6 +48,15 @@ public partial class Tag : BasePlugin, IPluginConfig<TagConfig>
 
     public void OnConfigParsed(TagConfig config)
     {
+        try
+        {
+            _api = AdminCapability.Get();
+        }
+        catch (Exception)
+        {
+            Logger.LogInformation("IksAdminApi.dll nety :(");
+        }
+        
         Json.ReadCore();
         Config = config;
     }
@@ -50,7 +65,7 @@ public partial class Tag : BasePlugin, IPluginConfig<TagConfig>
     {
         foreach (CCSPlayerController player in Utilities.GetPlayers())
         {
-            Instance.PlayerDatas[player.Slot] = GetTag(player);
+            Instance.PlayersData[player.Slot] = GetTag(player);
         }
     }
 
@@ -58,11 +73,11 @@ public partial class Tag : BasePlugin, IPluginConfig<TagConfig>
     {
         ConcurrentDictionary<string, CTag> tags = Instance.Config.Tags;
 
-        CTag steamidTag = tags.FirstOrDefault(tag => tag.Key == player.SteamID.ToString()).Value;
+        CTag steamIdTag = tags.FirstOrDefault(tag => tag.Key == player.SteamID.ToString()).Value;
 
-        if (steamidTag != null)
+        if (steamIdTag != null)
         {
-            return steamidTag;
+            return steamIdTag;
         }
 
         CTag groupTag = tags.FirstOrDefault(tag => tag.Key.StartsWith('#') && AdminManager.PlayerInGroup(player, tag.Key)).Value;
@@ -72,7 +87,9 @@ public partial class Tag : BasePlugin, IPluginConfig<TagConfig>
             return groupTag;
         }
 
-        CTag permissionTag = tags.FirstOrDefault(tag => tag.Key.StartsWith('@') && AdminManager.PlayerHasPermissions(player, tag.Key)).Value;
+        CTag permissionTag = tags.FirstOrDefault(tag => tag.Key.StartsWith('@') 
+                                                        && (AdminManager.PlayerHasPermissions(player, tag.Key) 
+                                                            || _api!.HasPermisions(player.SteamID.ToString(), string.Empty, tag.Key))).Value;
 
         if (permissionTag != null)
         {
